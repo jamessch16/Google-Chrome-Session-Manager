@@ -4,19 +4,19 @@
     "author": "James Schaefer-Pham",
     "description": "A Google Chrome extension that allows you to save a currently loaded session for later use.",
     "version": "0.1",
-    "permissions": ["tabs", "fileSystem"],
+    "permissions": ["tabs", "storage"],
     "icons": {
-        "16": null,
-        "48": null,
-        "128": null
+        "16": "assets/img16.png",
+        "48": "assets/img48.png",
+        "128": "assets/img128.png"
     },
     "action": {
         "default_title": "Session Manager",
         "default_icon": {
-            "16": null,
-            "24": null,
-            "32": null
+            "16": "assets/img16.png",
+            "24": "assets/img24.png",
+            "32": "assets/img32.png"
         },
-        "default_popup": "session_manager.html"
+        "default_popup": "src/session_manager.html"
     }
 }
