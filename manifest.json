@@ -1,9 +1,22 @@
 {
-    "name": "Tab Saver",
-    "description": "An extension to save and load chrome instances",
-    "version": "0.1",
     "manifest_version": 3,
+    "name": "Session Manager",
     "author": "James Schaefer-Pham",
-    "background": {  },
-    "permissions": ["fileSystem"]
+    "description": "A Google Chrome extension that allows you to save a currently loaded session for later use.",
+    "version": "0.1",
+    "permissions": ["tabs", "fileSystem"],
+    "icons": {
+        "16": null,
+        "48": null,
+        "128": null
+    },
+    "action": {
+        "default_title": "Session Manager",
+        "default_icon": {
+            "16": null,
+            "24": null,
+            "32": null
+        },
+        "default_popup": "session_manager.html"
+    }
 }
