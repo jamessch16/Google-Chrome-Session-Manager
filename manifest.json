@@ -1,0 +1,9 @@
+{
+    "name": "Tab Saver",
+    "description": "An extension to save and load chrome instances",
+    "version": "0.1",
+    "manifest_version": 3,
+    "author": "James Schaefer-Pham",
+    "background": {  },
+    "permissions": ["fileSystem"]
+}
