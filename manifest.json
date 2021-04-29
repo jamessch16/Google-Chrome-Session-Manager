@@ -10,13 +10,15 @@
         "48": "assets/img48.png",
         "128": "assets/img128.png"
     },
+    "background": {
+        "service_worker": "background.js"
+    },
     "action": {
         "default_title": "Session Manager",
         "default_icon": {
             "16": "assets/img16.png",
             "24": "assets/img24.png",
             "32": "assets/img32.png"
-        },
-        "default_popup": "src/session_manager.html"
+        }
     }
 }
