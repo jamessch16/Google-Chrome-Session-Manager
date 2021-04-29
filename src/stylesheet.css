@@ -1,0 +1,10 @@
+.horizontal_layout {
+    display:inline;
+    margin-right: 4px;
+}
+
+.button {
+    background-color: darkmagenta;
+    color:white;
+    border:none;
+}
