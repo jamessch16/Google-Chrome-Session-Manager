@@ -3,45 +3,43 @@
 
 function onSaveButtonPressed() {
 
-    chrome.windows.getAll({"populate": true}).then(resolve => {
+    chrome.windows.getAll({"populate": true}).then(windows => {
 
         // Isolate urls
-        let urls = []
+        let urls = [];
 
-        for (let i = 0; i < resolve.length; i++) {
-            
-            let tabs = resolve[i]["tabs"];
-            let win_urls = []
+        console.log(JSON.stringify(windows));
 
-            for (let i = 0; i < tabs.length; i++) {
-                win_urls.push(tabs[i]["url"]);
+        for (let i = 0; i < windows.length; i++) {
+            if (windows[i]["type"] === "normal") {
+
+                let tabs = windows[i]["tabs"];
+                let win_urls = []
+
+                for (let i = 0; i < tabs.length; i++) {
+                    win_urls.push(tabs[i]["url"]);
+                }
+                urls.push(win_urls);
             }
-            urls.push(win_urls);
         }
 
         // Write to file
         chrome.storage.local.set({"session-manager": urls}, () => {
-            document.getElementById("test").innerHTML = "STORE DONE\n" + JSON.stringify(urls);
+            console.log("STORE DONE\n" + JSON.stringify(urls));
         });
     });
 }
 
 function onLoadButtonPressed() {
 
-    // TODO TEST
-    // TODO IMPLEMENT STORAGE
-
     chrome.storage.local.get("session-manager", onURLsRetrievedCallback);
 }
 
 function onURLsRetrievedCallback(values) {
 
-    // TODO IGNORE SESSION MANAGER PAGE
-
     let urls = values["session-manager"];
 
-    document.getElementById("test").innerHTML = "RETRIEVE DONE\n"
-    document.getElementById("test").innerHTML = JSON.stringify(urls);
+    console.log("RETRIEVE DONE\n" + JSON.stringify(urls));
 
     for (let i = 0; i < urls.length; i++) {
         chrome.windows.create({
