@@ -33,7 +33,7 @@ TODO: Window is currently under the name "url". Resolve conflict between docs/co
 
 function populateSessionTable() {
 
-    return;
+    let get
 }
 
 function getCurrentSession(windows) {
@@ -58,9 +58,10 @@ function getCurrentSession(windows) {
     }
 
     // Return session
+    let time = new Date();
     return current_session = {
-        "name": "Quicksave",
-        "save_date": Date.now(),
+        "name": time.toUTCString(),
+        "save_date": time.getTime(),
         "windows": urls
     };
 }
@@ -68,19 +69,40 @@ function getCurrentSession(windows) {
 // When saving session to list
 function onSaveButtonPressed() {
 
+    let getSessionListPromise = new Promise(
+        (resolve, reject) => {
+            chrome.storage.local.get("saved_sessions", (result) => {
+                resolve(result);
+            });
+        }
+    );
+
     chrome.windows.getAll({"populate": true}).then(windows => {
 
         current_session = getCurrentSession(windows);
 
+        // Store current session to quicksave
         chrome.storage.local.set({"quicksave": current_session}, () => {
             console.log("STORE DONE\n" + JSON.stringify(current_session));
+        });
+
+        // Add current session to sessions list
+        getSessionListPromise.then(result => {
+            
+            saved_sessions = result["saved_sessions"];
+
+            saved_sessions.push(current_session);
+            chrome.storage.local.set({"saved_sessions": saved_sessions}, () => {});
+            
+            console.log("Size of saved_sessions: " + saved_sessions.length);
         });
     });
 }
 
+// Loads quicksave
 function onLoadButtonPressed() {
 
-    let getSessionsPromise = new Promise(
+    let getSessionPromise = new Promise(
         (resolve, reject) => {
             chrome.storage.local.get("quicksave", (result) => {
                 resolve(result);
@@ -88,7 +110,7 @@ function onLoadButtonPressed() {
         }
     );
 
-    getSessionsPromise.then(values => {
+    getSessionPromise.then(values => {
 
         console.log("RETRIEVE DONE\n" + JSON.stringify(values));
 
