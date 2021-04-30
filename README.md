@@ -4,4 +4,4 @@ A Google Chrome extension that allows you to save a currently loaded session for
 
 # TODO
 
-Store multiple different sessions. Edit session save at save time.
+Manage multiple different sessions. Edit session save at save time.
