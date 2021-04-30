@@ -1,9 +1,9 @@
 /*
-saved_sessions layout:
+local storage:
 
 {
     "quicksave": [Session saved after last save],
-    "sessions": [
+    "saved_sessions": [
         A list of previous sessions
     ] 
 }
@@ -12,7 +12,6 @@ session layout:
 {
     "name": [user set name. Defaults as "Session X", X = number of sessions currently saved],
     "save_date": [The date saved. Also acts as UID?],
-    "last_load": [Time of last load],   // THIS IS OPTIONAL. May or may not be implemented.
     "windows":[
         A list of windows
     ]
@@ -30,10 +29,40 @@ TODO: Window is currently under the name "url". Resolve conflict between docs/co
 // TODO IMPLEMENT SESSION ID = time.time() ????????. Hard to iterate/display, easy IO.
 // TODO HANDLE null LOAD: IE WHEN NO SAVES YET
 // TODO IMPLEMENT STORAGE AS DEFINED ABOVE
+// TODO BUTTON ON CLICK USER NOTIFICATION
 
 function populateSessionTable() {
 
     return;
+}
+
+function getCurrentSession(windows) {
+
+    // Isolate urls
+    let urls = [];
+
+    console.log(JSON.stringify(windows));
+
+    // Populate urls as a list of window url lists
+    for (let i = 0; i < windows.length; i++) {
+        if (windows[i]["type"] === "normal") {
+
+            let tabs = windows[i]["tabs"];
+            let win_urls = [];
+
+            for (let i = 0; i < tabs.length; i++) {
+                win_urls.push(tabs[i]["url"]);
+            }
+            urls.push(win_urls);
+        }
+    }
+
+    // Return session
+    return current_session = {
+        "name": "Quicksave",
+        "save_date": Date.now(),
+        "windows": urls
+    };
 }
 
 // When saving session to list
@@ -41,27 +70,10 @@ function onSaveButtonPressed() {
 
     chrome.windows.getAll({"populate": true}).then(windows => {
 
-        // Isolate urls
-        let urls = [];
+        current_session = getCurrentSession(windows);
 
-        console.log(JSON.stringify(windows));
-
-        for (let i = 0; i < windows.length; i++) {
-            if (windows[i]["type"] === "normal") {
-
-                let tabs = windows[i]["tabs"];
-                let win_urls = [];
-
-                for (let i = 0; i < tabs.length; i++) {
-                    win_urls.push(tabs[i]["url"]);
-                }
-                urls.push(win_urls);
-            }
-        }
-
-        // Write to file
-        chrome.storage.local.set({"saved_sessions": urls}, () => {
-            console.log("STORE DONE\n" + JSON.stringify(urls));
+        chrome.storage.local.set({"quicksave": current_session}, () => {
+            console.log("STORE DONE\n" + JSON.stringify(current_session));
         });
     });
 }
@@ -70,7 +82,7 @@ function onLoadButtonPressed() {
 
     let getSessionsPromise = new Promise(
         (resolve, reject) => {
-            chrome.storage.local.get("saved_sessions", (result) => {
+            chrome.storage.local.get("quicksave", (result) => {
                 resolve(result);
             });
         }
@@ -80,7 +92,7 @@ function onLoadButtonPressed() {
 
         console.log("RETRIEVE DONE\n" + JSON.stringify(values));
 
-        let urls = values["saved_sessions"];
+        let urls = values["quicksave"]["windows"];
 
         for (let i = 0; i < urls.length; i++) {
             chrome.windows.create({
@@ -88,22 +100,7 @@ function onLoadButtonPressed() {
             });
         }
     });
-
-    //chrome.storage.local.get("saved_sessions", onURLsRetrievedCallback);
 }
-
-//function onURLsRetrievedCallback(values) {
-//
-//    let urls = values["saved_sessions"];
-//
-//    console.log("RETRIEVE DONE\n" + JSON.stringify(urls));
-//
-//    for (let i = 0; i < urls.length; i++) {
-//        chrome.windows.create({
-//            "url": urls[i]
-//        });
-//    }
-//}
 
 document.addEventListener("DOMContentLoaded", () => {
     populateSessionTable();
