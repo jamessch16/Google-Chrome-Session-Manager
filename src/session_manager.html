@@ -5,12 +5,23 @@
         <title>Session Manager</title>
         <link rel="stylesheet" href="stylesheet.css">
         <script src="sessionManager.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     </head>
     <body>
         <div class="horizontal_layout">
             <button id="save_button" class="button" type="button">Save current session</button>
             <button id="load_button" class="button" type="button">Load previous session</button>
         </div>
-        <p id="test">No tabs saved</p>
+        <table class="session_list">
+            <thead>
+                <tr>
+                    <th>Session Name</th>
+                    <th>Date Saved</th>
+                </tr>
+            </thead>
+            <tbody id="session_list_table">
+
+            </tbody>
+        </table>
     </body>
 </html>

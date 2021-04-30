@@ -26,14 +26,49 @@ TODO: Window is currently under the name "url". Resolve conflict between docs/co
 
 */
 
-// TODO IMPLEMENT SESSION ID = time.time() ????????. Hard to iterate/display, easy IO.
 // TODO HANDLE null LOAD: IE WHEN NO SAVES YET
-// TODO IMPLEMENT STORAGE AS DEFINED ABOVE
 // TODO BUTTON ON CLICK USER NOTIFICATION
+// TODO RECONCILE VARIABLE NAMING CONVENTIONS
+// TODO IMPLEMENT JQUERY FOR ROW SELECTION
 
 function populateSessionTable() {
 
-    let get
+    let getSavedSessionsPromise = new Promise(
+        (resolve, reject) => {
+            chrome.storage.local.get("saved_sessions", (result) => {
+                resolve(result);
+            });
+        }
+    );
+
+    getSavedSessionsPromise.then(result => {
+
+        let session_table = document.getElementById("session_list_table");
+        saved_sessions = result["saved_sessions"];
+
+        clearSessionTable()
+
+        for (let i = 0; i < saved_sessions.length; i++) {
+            
+            let newRow = session_table.insertRow();
+            let nameCell = newRow.insertCell(0);
+            let dateCell = newRow.insertCell(1);
+
+            nameCell.innerHTML = saved_sessions[i]["name"];
+            dateCell.innerHTML = saved_sessions[i]["save_date"];
+        }
+
+    })
+}
+
+function clearSessionTable() {
+
+    let session_table = document.getElementById("session_list_table");
+    let numRows = session_table.rows.length; 
+
+    for (let i = 0; i < numRows; i++) {
+        session_table.deleteRow(0);
+    }
 }
 
 function getCurrentSession(windows) {
@@ -69,7 +104,7 @@ function getCurrentSession(windows) {
 // When saving session to list
 function onSaveButtonPressed() {
 
-    let getSessionListPromise = new Promise(
+    let getSavedSessionsPromise = new Promise(
         (resolve, reject) => {
             chrome.storage.local.get("saved_sessions", (result) => {
                 resolve(result);
@@ -87,7 +122,7 @@ function onSaveButtonPressed() {
         });
 
         // Add current session to sessions list
-        getSessionListPromise.then(result => {
+        getSavedSessionsPromise.then(result => {
             
             saved_sessions = result["saved_sessions"];
 
@@ -95,6 +130,11 @@ function onSaveButtonPressed() {
             chrome.storage.local.set({"saved_sessions": saved_sessions}, () => {});
             
             console.log("Size of saved_sessions: " + saved_sessions.length);
+
+
+            // TODO THIS IS A CRUDE METHOD OF UPDATING THE TABLE. FIND BETTER SOLUTION
+            populateSessionTable();
+
         });
     });
 }

@@ -1,10 +1,18 @@
 .horizontal_layout {
     display:inline;
-    margin-right: 4px;
 }
 
 .button {
     background-color: darkmagenta;
-    color:white;
-    border:none;
+    color: white;
+    padding: 16px;
+    margin: 8px;
+    border: none;
+    border-radius: 5px;
+}
+
+.session_list {
+    border-color: grey;
+    border-width: 1px;
+    overflow: auto;
 }
