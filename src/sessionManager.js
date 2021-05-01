@@ -29,8 +29,10 @@ TODO: Window is currently under the name "url". Resolve conflict between docs/co
 // TODO HANDLE null LOAD: IE WHEN NO QUICKSAVES YET. ALSO WHEN QUICKSAVE WAS DELETED ************
 // TODO BUTTON ON CLICK USER NOTIFICATION
 // TODO RECONCILE VARIABLE NAMING CONVENTIONS
+// TODO EDIT SESSION DETAILS AT SAVE TIME
 
-selectedRowID = null;
+let selectedRowID = null;
+const timezone = "America/Edmonton";
 
 function populateSessionTable() {
 
@@ -57,7 +59,7 @@ function populateSessionTable() {
 
             // TODO WHAT IF CLICK HITS ROW INSTEAD OF CELL? CAN THIS HAPPEN?
 
-            newRow.id = "TABLE_ROW_" + saved_sessions[i]["save_date"];
+            newRow.id = "TABLE_ROW_" + saved_sessions[i]["id"];
             newRow.addEventListener("click", event => {
                 if (selectedRowID != null)  document.getElementById(selectedRowID).style = "background-color: white";
                 else                        document.getElementById("delete_button").style = "background-color: darkmagenta";
@@ -68,8 +70,10 @@ function populateSessionTable() {
                 console.log("SELECTED ROW ID: " + selectedRowID);
             });
 
+            const options = {"year": "numeric", "month": "short", "day": "2-digit", "hour": "2-digit", "minute": "2-digit", "timeZoneName": "short", "timeZone": timezone};
+
             nameCell.innerHTML = saved_sessions[i]["name"];
-            dateCell.innerHTML = saved_sessions[i]["save_date"];
+            dateCell.innerHTML = (new Date(JSON.parse(saved_sessions[i]["save_date"]))).toLocaleDateString("en-CA", options);
         }
 
     })
@@ -106,11 +110,18 @@ function getCurrentSession(windows) {
         }
     }
 
+
     // Return session
     let time = new Date();
+
+    console.log("CREATE SESSION DATE: " + time);
+    console.log("TYPE DATE: " + typeof(time));
+
+
     return current_session = {
-        "name": time.toUTCString(),
-        "save_date": time.getTime(),
+        "id": time.getTime(),
+        "name": "untitled",
+        "save_date": JSON.stringify(time),
         "windows": urls
     };
 }
@@ -229,7 +240,7 @@ function onDeleteButtonPressed() {
         console.log("STORED RETRIEVE DONE\n" + JSON.stringify(values));
         console.log("REMOVE SESSION INDEX " + rowIndex);
 
-        if (selectedRowID == values["saved_sessions"]["save_date"]) {
+        if (selectedRowID == values["saved_sessions"][rowIndex]["id"]) {
             values["quicksave"] = null;
         }
 
