@@ -31,7 +31,7 @@ TODO: Window is currently under the name "url". Resolve conflict between docs/co
 // TODO RECONCILE VARIABLE NAMING CONVENTIONS
 // TODO IMPLEMENT JQUERY FOR ROW SELECTION
 
-selectedRow = null;
+selectedRowID = null;
 
 function populateSessionTable() {
 
@@ -60,11 +60,11 @@ function populateSessionTable() {
 
             newRow.id = "TABLE_ROW_" + saved_sessions[i]["save_date"];
             newRow.addEventListener("click", event => {
-                if (selectedRow != null) selectedRow.style = "background-color: white";
+                if (selectedRowID != null) document.getElementById(selectedRowID).style = "background-color: white";
                 
-                selectedRow = document.getElementById(event.target.parentElement.id);
-                selectedRow.style = "background-color: grey";
-                console.log("SELECTED ROW: " + selectedRow);
+                selectedRowID = event.target.parentElement.id;
+                document.getElementById(selectedRowID).style = "background-color: grey";
+                console.log("SELECTED ROW ID: " + selectedRowID);
             });
 
             nameCell.innerHTML = saved_sessions[i]["name"];
@@ -144,37 +144,65 @@ function onSaveButtonPressed() {
             
             console.log("Size of saved_sessions: " + saved_sessions.length);
 
-
-            // TODO THIS IS A CRUDE METHOD OF UPDATING THE TABLE. FIND BETTER SOLUTION
             populateSessionTable();
-
         });
     });
 }
 
-// Loads quicksave
+// Loads session
 function onLoadButtonPressed() {
 
-    let getSessionPromise = new Promise(
-        (resolve, reject) => {
-            chrome.storage.local.get("quicksave", (result) => {
-                resolve(result);
-            });
-        }
-    );
+    console.log("SELECTED ROW ID " + selectedRowID);
 
-    getSessionPromise.then(values => {
+    if (selectedRowID == null) {
 
-        console.log("RETRIEVE DONE\n" + JSON.stringify(values));
+        let getSessionPromise = new Promise(
+            (resolve, reject) => {
+                chrome.storage.local.get("quicksave", (result) => {
+                    resolve(result);
+                });
+            }
+        );
 
-        let urls = values["quicksave"]["windows"];
+        getSessionPromise.then(values => {
 
-        for (let i = 0; i < urls.length; i++) {
-            chrome.windows.create({
-                "url": urls[i]
-            });
-        }
-    });
+            console.log("QUICKSAVE RETRIEVE DONE\n" + JSON.stringify(values));
+
+            let urls = values["quicksave"]["windows"];
+
+            for (let i = 0; i < urls.length; i++) {
+                chrome.windows.create({
+                    "url": urls[i]
+                });
+            }
+        });
+    }
+    else {
+        
+        let getSessionPromise = new Promise(
+            (resolve, reject) => {
+                chrome.storage.local.get("saved_sessions", (result) => {
+                    resolve(result);
+                });
+            }
+        );
+
+        getSessionPromise.then(values => {
+
+            console.log("STORED RETRIEVE DONE\n" + JSON.stringify(values));
+
+            let rowIndex = document.getElementById(selectedRowID).rowIndex - 1;
+            console.log("ACCESS SESSION INDEX " + rowIndex);
+
+            let urls = values["saved_sessions"][rowIndex]["windows"];
+
+            for (let i = 0; i < urls.length; i++) {
+                chrome.windows.create({
+                    "url": urls[i]
+                });
+            }
+        });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
