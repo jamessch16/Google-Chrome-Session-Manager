@@ -211,6 +211,10 @@ function onDeleteButtonPressed() {
 
     let rowIndex = document.getElementById(selectedRowID).rowIndex - 1;
 
+    document.getElementById("session_list_table").deleteRow(rowIndex);
+    document.getElementById("delete_button").style = "background-color: lightgray";
+    selectedRowID = null;
+
     let getSessionsPromise = new Promise(
         (resolve, reject) => {
             chrome.storage.local.get(null, (result) => {
@@ -232,10 +236,6 @@ function onDeleteButtonPressed() {
         values["saved_sessions"].splice(rowIndex, 1);
         chrome.storage.local.set({"saved_sessions": values["saved_sessions"]}, () => {});
     });
-
-    document.getElementById("session_list_table").deleteRow(rowIndex);
-
-    selectedRowID = null;
 }
 
 
