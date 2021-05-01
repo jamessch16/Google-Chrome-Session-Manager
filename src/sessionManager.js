@@ -31,6 +31,8 @@ TODO: Window is currently under the name "url". Resolve conflict between docs/co
 // TODO RECONCILE VARIABLE NAMING CONVENTIONS
 // TODO IMPLEMENT JQUERY FOR ROW SELECTION
 
+selectedRow = null;
+
 function populateSessionTable() {
 
     let getSavedSessionsPromise = new Promise(
@@ -53,6 +55,17 @@ function populateSessionTable() {
             let newRow = session_table.insertRow();
             let nameCell = newRow.insertCell(0);
             let dateCell = newRow.insertCell(1);
+
+            // TODO WHAT IF CLICK HITS ROW INSTEAD OF CELL?
+
+            newRow.id = "TABLE_ROW_" + saved_sessions[i]["save_date"];
+            newRow.addEventListener("click", event => {
+                if (selectedRow != null) selectedRow.style = "background-color: white";
+                
+                selectedRow = document.getElementById(event.target.parentElement.id);
+                selectedRow.style = "background-color: grey";
+                console.log("SELECTED ROW: " + selectedRow);
+            });
 
             nameCell.innerHTML = saved_sessions[i]["name"];
             dateCell.innerHTML = saved_sessions[i]["save_date"];

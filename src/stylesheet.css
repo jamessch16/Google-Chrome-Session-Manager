@@ -1,3 +1,12 @@
+tr {
+    background-color: white;
+}
+
+td {
+    background-color: white;
+}
+
+
 .horizontal_layout {
     display:inline;
 }
