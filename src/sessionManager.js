@@ -70,7 +70,7 @@ function populateSessionTable() {
                 console.log("SELECTED ROW ID: " + selectedRowID);
             });
 
-            const options = {"year": "numeric", "month": "short", "day": "2-digit", "hour": "2-digit", "minute": "2-digit", "timeZoneName": "short", "timeZone": timezone};
+            const options = {"year": "numeric", "month": "short", "day": "2-digit", "hour": "2-digit", "minute": "2-digit", "timeZoneName": "short", "hourCycle": "h24", "timeZone": timezone};
 
             nameCell.innerHTML = saved_sessions[i]["name"];
             dateCell.innerHTML = (new Date(JSON.parse(saved_sessions[i]["save_date"]))).toLocaleDateString("en-CA", options);
