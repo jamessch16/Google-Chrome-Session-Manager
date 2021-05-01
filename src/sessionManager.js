@@ -26,10 +26,9 @@ TODO: Window is currently under the name "url". Resolve conflict between docs/co
 
 */
 
-// TODO HANDLE null LOAD: IE WHEN NO SAVES YET
+// TODO HANDLE null LOAD: IE WHEN NO QUICKSAVES YET. ALSO WHEN QUICKSAVE WAS DELETED ************
 // TODO BUTTON ON CLICK USER NOTIFICATION
 // TODO RECONCILE VARIABLE NAMING CONVENTIONS
-// TODO IMPLEMENT JQUERY FOR ROW SELECTION
 
 selectedRowID = null;
 
@@ -56,14 +55,16 @@ function populateSessionTable() {
             let nameCell = newRow.insertCell(0);
             let dateCell = newRow.insertCell(1);
 
-            // TODO WHAT IF CLICK HITS ROW INSTEAD OF CELL?
+            // TODO WHAT IF CLICK HITS ROW INSTEAD OF CELL? CAN THIS HAPPEN?
 
             newRow.id = "TABLE_ROW_" + saved_sessions[i]["save_date"];
             newRow.addEventListener("click", event => {
-                if (selectedRowID != null) document.getElementById(selectedRowID).style = "background-color: white";
+                if (selectedRowID != null)  document.getElementById(selectedRowID).style = "background-color: white";
+                else                        document.getElementById("delete_button").style = "background-color: darkmagenta";
                 
                 selectedRowID = event.target.parentElement.id;
-                document.getElementById(selectedRowID).style = "background-color: grey";
+                document.getElementById(selectedRowID).style = "background-color: lightblue";
+
                 console.log("SELECTED ROW ID: " + selectedRowID);
             });
 
@@ -205,8 +206,42 @@ function onLoadButtonPressed() {
     }
 }
 
+function onDeleteButtonPressed() {
+    if (selectedRowID == null) return;
+
+    let rowIndex = document.getElementById(selectedRowID).rowIndex - 1;
+
+    let getSessionsPromise = new Promise(
+        (resolve, reject) => {
+            chrome.storage.local.get(null, (result) => {
+                resolve(result);
+            });
+        }
+    );
+
+    // Remove session from storage
+    getSessionsPromise.then(values => {
+
+        console.log("STORED RETRIEVE DONE\n" + JSON.stringify(values));
+        console.log("REMOVE SESSION INDEX " + rowIndex);
+
+        if (selectedRowID == values["saved_sessions"]["save_date"]) {
+            values["quicksave"] = null;
+        }
+
+        values["saved_sessions"].splice(rowIndex, 1);
+        chrome.storage.local.set({"saved_sessions": values["saved_sessions"]}, () => {});
+    });
+
+    document.getElementById("session_list_table").deleteRow(rowIndex);
+
+    selectedRowID = null;
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
     populateSessionTable();
     document.getElementById("save_button").addEventListener("click", onSaveButtonPressed);
     document.getElementById("load_button").addEventListener("click", onLoadButtonPressed);
+    document.getElementById("delete_button").addEventListener("click", onDeleteButtonPressed);
 });

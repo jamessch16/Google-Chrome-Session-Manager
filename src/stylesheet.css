@@ -1,23 +1,17 @@
-tr {
-    color: black;
-    cursor: pointer;
-}
-
-td {
-    color: black;
-    user-select: none;
-}
-
 table {
     border-collapse: collapse;
     text-indent: initial;
 }
 
-.horizontal_layout {
-    display:inline;
+tr {
+    cursor: pointer;
 }
 
-.button {
+td {
+    user-select: none;
+}
+
+button {
     background-color: darkmagenta;
     color: white;
     padding: 16px;
@@ -27,8 +21,12 @@ table {
     cursor: pointer;
 }
 
+.horizontal_layout {
+    display:inline;
+}
+
 .session_list {
-    border-color: grey;
+    border-color: lightgray;
     border-width: 1px;
     overflow: auto;
 }
