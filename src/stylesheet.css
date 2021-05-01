@@ -1,11 +1,17 @@
 tr {
-    background-color: white;
+    color: black;
+    cursor: pointer;
 }
 
 td {
-    background-color: white;
+    color: black;
+    user-select: none;
 }
 
+table {
+    border-collapse: collapse;
+    text-indent: initial;
+}
 
 .horizontal_layout {
     display:inline;
@@ -18,6 +24,7 @@ td {
     margin: 8px;
     border: none;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .session_list {
